@@ -2,14 +2,14 @@ package com.intecs.mab;
 
 public class Seed {
 
-	private int seed;
+	private int value;
 	
 	public Seed(int s) {
-       seed=s;
+		value=s;
 	
 	}
 	
-	public int getSeed() {
-		return this.seed;
+	public int getValue() {
+		return this.value;
 	}
 }

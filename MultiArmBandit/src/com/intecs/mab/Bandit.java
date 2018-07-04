@@ -2,16 +2,16 @@ package com.intecs.mab;
 
 public class Bandit {
 
-	private WinProbability prob;
+	private BernulliDistribution mu;
 	
 	
-	public Bandit(WinProbability probability) {
-		prob=probability;
+	public Bandit(BernulliDistribution mu) {
+		this.mu=mu;
 	}
 	
 	
 	public Reward pull() {
 		
-		return new Reward();
+		return new Reward(false);
 	}
 }
