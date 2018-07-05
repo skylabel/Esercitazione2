@@ -9,6 +9,7 @@ public class CumulativeReward {
 	}
 
 	public CumulativeReward(Integer initialValue) {
+		if(initialValue<0) throw new IllegalArgumentException("Negative Construcctor argumet");
 		value = initialValue;
 	}
 	
