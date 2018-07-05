@@ -9,6 +9,7 @@ public class Bandit {
 	}
 
 	public Bandit(WinProbability p) {
+		if(p==null) throw new NullPointerException("Bandit con argomento NULL");
 		ber = new BernulliDistribution(p);
 	}
 

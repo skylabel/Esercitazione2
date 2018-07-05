@@ -1,14 +1,14 @@
 package com.intecs.tddmab;
 
-public class CumulativeGain {
+public class CumulativeReward {
 	
 	private Integer value;
 	
-	public CumulativeGain() {
+	public CumulativeReward() {
 		this(0);
 	}
 
-	public CumulativeGain(Integer initialValue) {
+	public CumulativeReward(Integer initialValue) {
 		value = initialValue;
 	}
 	
@@ -27,10 +27,10 @@ public class CumulativeGain {
 	@Override
 	public boolean equals(Object obj) {
 		if (this == obj) return true;
-        if(! (obj instanceof CumulativeGain)) return false;
+        if(! (obj instanceof CumulativeReward)) return false;
         
         boolean result = false;
-        CumulativeGain re2=(CumulativeGain)obj;
+        CumulativeReward re2=(CumulativeReward)obj;
         if(re2.value==this.value) result=true;
         return result;
 	}

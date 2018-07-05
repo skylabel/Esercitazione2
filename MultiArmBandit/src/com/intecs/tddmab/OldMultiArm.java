@@ -6,7 +6,7 @@ import java.util.List;
 public class OldMultiArm {
 	
 	private List<OldBandit> OldBandits;
-	private CumulativeGain currentGain;
+	private CumulativeReward currentCumulativeReward;
 	
 	public OldMultiArm() {
 		OldBandits=new ArrayList<>();
@@ -15,38 +15,38 @@ public class OldMultiArm {
 		OldBandits.add(new OldBandit());
 		OldBandits.add(new OldBandit());
 		OldBandits.add(new OldBandit());
-		currentGain = new CumulativeGain(0);
+		currentCumulativeReward = new CumulativeReward(0);
 	}
 	
 	private Reward pullSelectedArm(OldBandit OldBandit) {
 		
 		Reward reward = OldBandit.pull();
-		currentGain.addReward(reward);
+		currentCumulativeReward.addReward(reward);
 		return reward;
 	}
 	
-	public Reward choseArm1() {
+	public Reward pullBandit1() {
 		return pullSelectedArm(OldBandits.get(0));
 	}
 	
-	public Reward choseArm2() {
+	public Reward pullBandit2() {
 		return pullSelectedArm(OldBandits.get(1));
 	}
 	
-	public Reward choseArm3() {
+	public Reward pullBandit3() {
 		return pullSelectedArm(OldBandits.get(2));
 	}
 	
-	public Reward choseArm4() {
+	public Reward pullBandit4() {
 		return pullSelectedArm(OldBandits.get(3));
 	}
 	
-	public Reward choseArm5() {
+	public Reward pullBandit5() {
 		return pullSelectedArm(OldBandits.get(4));
 	}
 
-	public CumulativeGain getGain() {
-		return currentGain;
+	public CumulativeReward getCumulativeReward() {
+		return currentCumulativeReward;
 	}
 	
 }

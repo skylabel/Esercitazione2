@@ -6,9 +6,8 @@ import java.util.List;
 public class MultiArm {
 
 	private List<Bandit> bandits;
-	private CumulativeGain currentGain;
-	private RoundCounter counter;
-	private boolean inGame;
+	private CumulativeReward cumulativeReward;
+	private RoundCounter roundCounter;
 	
 	public MultiArm() {
 		UniformDistribution unif = new UniformDistribution();
@@ -18,55 +17,62 @@ public class MultiArm {
 		bandits.add(new Bandit(unif.getSample()));
 		bandits.add(new Bandit(unif.getSample()));
 		bandits.add(new Bandit(unif.getSample()));
-		currentGain = new CumulativeGain(0);
-		counter = new RoundCounter(10);
-		inGame = true;
+		cumulativeReward = new CumulativeReward(0);
+		roundCounter = new RoundCounter(10);
 	}
 	
+	public MultiArm(List<Bandit> bandits,RoundCounter rounds) {
+		this.bandits = bandits;
+		cumulativeReward = new CumulativeReward(0);
+		roundCounter = rounds;
+	}
+
 	public RoundCounter getCounter() {
-		return counter;
+		return roundCounter;
 	}
 	
-	public void setCounter(Integer count) throws StillInGameException {
-		if (inGame)
+	public void setNumberOfRound(Integer count) throws StillInGameException {
+		if (!roundCounter.isZero())
 			throw new StillInGameException();
-		counter.setValue(count);
+		roundCounter.setValue(count);
 	}
 	
-	private Reward pullSelectedArm(Bandit bandit) {
+	private Reward pullSelectedBandit(Bandit bandit) throws LastRoundReachedException {
 		Reward reward = null;
-		try {
-			counter.increase();
+			roundCounter.increase();
 			reward = bandit.pull();
-			currentGain.addReward(reward);
-		} catch (LastRoundReachedException e) {
-			inGame = false;
-		}
+			cumulativeReward.addReward(reward);
+	
 		return reward;
 	}
 	
-	public Reward choseArm1() throws LastRoundReachedException {
-		return pullSelectedArm(bandits.get(0));
+	public Reward pullBandit1() throws LastRoundReachedException {
+		return pullSelectedBandit(bandits.get(0));
 	}
 	
-	public Reward choseArm2() throws LastRoundReachedException {
-		return pullSelectedArm(bandits.get(1));
+	public Reward pullBandit2() throws LastRoundReachedException {
+		return pullSelectedBandit(bandits.get(1));
 	}
 	
-	public Reward choseArm3() throws LastRoundReachedException {
-		return pullSelectedArm(bandits.get(2));
+	public Reward pullBandit3() throws LastRoundReachedException {
+		return pullSelectedBandit(bandits.get(2));
 	}
 	
-	public Reward choseArm4() throws LastRoundReachedException {
-		return pullSelectedArm(bandits.get(3));
+	public Reward pullBandit4() throws LastRoundReachedException {
+		return pullSelectedBandit(bandits.get(3));
 	}
 	
-	public Reward choseArm5() throws LastRoundReachedException {
-		return pullSelectedArm(bandits.get(4));
+	public Reward pullBandit5() throws LastRoundReachedException {
+		return pullSelectedBandit(bandits.get(4));
 	}
 
-	public CumulativeGain getGain() {
-		return currentGain;
+	public CumulativeReward getCumulativeReward() {
+		return cumulativeReward;
+	}
+
+	public void reset() {
+		roundCounter.reset();
+		cumulativeReward.reset();
 	}
 
 }

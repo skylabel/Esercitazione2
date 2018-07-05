@@ -14,10 +14,6 @@ public class RoundCounter {
 		count = 0;
 	}
 
-	public RoundCounter(Integer initialValue, Integer bound) {
-		numberOfRounds = bound;
-		count = initialValue;
-	}
 
 	public int getCount() {
 		return count;
@@ -30,12 +26,16 @@ public class RoundCounter {
 		count++;
 	}
 
+	public boolean isZero() {
+		return (count==0);
+	}
+	
 	public void reset() {
-		setValue(0);
+		this.count=0;
 	}
 
 	public void setValue(Integer count) {
-		this.count = count;
+		this.numberOfRounds = count;
 	}
 	
 	@Override

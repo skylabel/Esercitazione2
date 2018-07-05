@@ -1,7 +1,5 @@
 package com.intecs.tddmab;
 
-import java.util.function.Supplier;
-
 public class OldBandit {
 
 	int count=0;

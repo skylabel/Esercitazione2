@@ -1,8 +1,7 @@
 package com.intecs.tddmab;
 
 public class Seed {
-
-	private int value;
+private int value;
 	
 	public Seed(int s) {
 		value=s;
