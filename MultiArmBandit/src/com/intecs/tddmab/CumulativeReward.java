@@ -2,13 +2,14 @@ package com.intecs.tddmab;
 
 public class CumulativeReward {
 	
-	private Integer value;
+	private Double value;
 	
 	public CumulativeReward() {
-		this(0);
+		this(0d);
 	}
 
-	public CumulativeReward(Integer initialValue) {
+	public CumulativeReward(Double initialValue) {
+		if(initialValue==null) throw new NullPointerException();
 		if(initialValue<0) throw new IllegalArgumentException("Negative Construcctor argumet");
 		value = initialValue;
 	}
@@ -17,12 +18,12 @@ public class CumulativeReward {
 		value = value + reward.getValue();
 	}
 
-	public Integer getValue() {
+	public Double getValue() {
 		return value;
 	}
 
 	public void reset() {
-		value = 0;
+		value = 0d;
 	}
 	
 	@Override
@@ -34,6 +35,10 @@ public class CumulativeReward {
         CumulativeReward re2=(CumulativeReward)obj;
         if(re2.value==this.value) result=true;
         return result;
+	}
+
+	public boolean isZero() {
+		return value == 0;
 	}
 
 }

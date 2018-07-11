@@ -1,14 +1,16 @@
 package com.intecs.tddmab;
 
 public class Seed {
-private int value;
 	
-	public Seed(int s) {
+private Integer value;
+	
+	public Seed(Integer s) {
+		if(s<0) throw new IllegalArgumentException();
 		value=s;
-	
 	}
 	
-	public int getValue() {
+	public Integer getValue() {
 		return this.value;
 	}
+	
 }

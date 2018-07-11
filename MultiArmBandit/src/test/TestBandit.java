@@ -9,7 +9,7 @@ import com.intecs.tddmab.Bandit;
 import com.intecs.tddmab.Reward;
 import com.intecs.tddmab.WinProbability;
 
-class testBandit {
+class TestBandit {
 
 	
 	@Test
@@ -26,14 +26,6 @@ class testBandit {
 		assertThrows(NullPointerException.class, ()->{new Bandit(null);});
 	}
 	
-	@Test
-	void testRealBandit() {
-		WinProbability p = new WinProbability(0.8d);
-		Bandit bandit=new Bandit(p);
-		Reward reward = bandit.pull();
-		System.out.println(reward.getValue());
-		reward = bandit.pull();
-		System.out.println(reward.getValue());
-	}
+
 
 }

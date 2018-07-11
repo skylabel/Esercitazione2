@@ -17,24 +17,32 @@ public class MultiArm {
 		bandits.add(new Bandit(unif.getSample()));
 		bandits.add(new Bandit(unif.getSample()));
 		bandits.add(new Bandit(unif.getSample()));
-		cumulativeReward = new CumulativeReward(0);
-		roundCounter = new RoundCounter(10);
+		cumulativeReward = new CumulativeReward(0d);
+		roundCounter = new RoundCounter(1000);
 	}
 	
 	public MultiArm(List<Bandit> bandits,RoundCounter rounds) {
 		this.bandits = bandits;
-		cumulativeReward = new CumulativeReward(0);
+		cumulativeReward = new CumulativeReward(0d);
 		roundCounter = rounds;
 	}
 
 	public RoundCounter getCounter() {
 		return roundCounter;
 	}
+
+	public Integer getCounterValue() {
+		return roundCounter.getCount();
+	}
+	
+	public Integer getcounterBound() {
+		return roundCounter.getCounterBound();
+	}
 	
 	public void setNumberOfRound(Integer count) throws StillInGameException {
 		if (!roundCounter.isZero())
 			throw new StillInGameException();
-		roundCounter.setValue(count);
+		roundCounter.setBound(count);
 	}
 	
 	private Reward pullSelectedBandit(Bandit bandit) throws LastRoundReachedException {
@@ -44,6 +52,10 @@ public class MultiArm {
 			cumulativeReward.addReward(reward);
 	
 		return reward;
+	}
+	
+	public Reward pullBandit(Integer bandit) throws LastRoundReachedException {
+		return pullSelectedBandit(bandits.get(bandit));
 	}
 	
 	public Reward pullBandit1() throws LastRoundReachedException {
@@ -69,10 +81,17 @@ public class MultiArm {
 	public CumulativeReward getCumulativeReward() {
 		return cumulativeReward;
 	}
+	public Double getCumulativeRewardValue() {
+		return this.cumulativeReward.getValue();
+	}
 
 	public void reset() {
 		roundCounter.reset();
 		cumulativeReward.reset();
+	}
+
+	public int getNumberOfBandits() {
+		return this.bandits.size();
 	}
 
 }

@@ -4,6 +4,9 @@ package com.intecs.tddmab;
 
 public class WinProbability {
 
+	public static WinProbability ZERO = new WinProbability(0d);
+	public static WinProbability ONE = new WinProbability(1d);
+	
 	private Double probability;
 	
 	public WinProbability() {
