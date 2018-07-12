@@ -5,12 +5,12 @@ import java.util.Objects;
 
 public abstract class Player {
 
-    private String username;
+    private Username username;
     private String name;
     private String born;
     private String strategyType;
 
-    public Player(String username, String playerName, String birthdate, String strategyType) {
+    public Player(Username username, String playerName, String birthdate, String strategyType) {
         if (playerName.equals(null) || birthdate.equals(null) || strategyType.equals(null))
             throw new NullPointerException();
         this.username=username;
@@ -24,7 +24,7 @@ public abstract class Player {
     public abstract void reset(MultiArm multiArm);
 
     public String getUserName() {
-        return username;
+        return username.getValue();
     }
 
     public String getName() {
@@ -54,4 +54,5 @@ public abstract class Player {
     public int hashCode() {
         return Objects.hash(username, name, born, strategyType);
     }
+
 }

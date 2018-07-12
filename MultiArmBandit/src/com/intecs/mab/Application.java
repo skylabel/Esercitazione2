@@ -26,7 +26,7 @@ public class Application {
     }
 
     public Player login(String username) throws SQLException, PlayerDataCorruptionException,
-            ClassNotFoundException, PlayerIsNotPresentException {
+            ClassNotFoundException, PlayerIsNotPresentException, IllegalUsernameException {
         this.currentPlayer = archive.getPlayer(username);
         Player player = this.currentPlayer;
         return player;
@@ -46,7 +46,7 @@ public class Application {
     }
 
     public void unregisterPlayer(Player player) throws PlayerIsNotPresentException, SQLException, ClassNotFoundException {
-        archive.delete(player);
+        archive.delete(player.getUserName());
     }
 
     private double[][] computeRegret(MultiArm multiarm, int rep, Player player) {

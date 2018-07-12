@@ -10,7 +10,7 @@ public class UniformExplorationPlayer extends Player {
 
     private ExplorationRate rate;
 
-    public UniformExplorationPlayer(String username, String name, String born, ExplorationRate rate) {
+    public UniformExplorationPlayer(Username username, String name, String born, ExplorationRate rate) {
         super(username, name, born, "UE");
         this.rate = rate;
 

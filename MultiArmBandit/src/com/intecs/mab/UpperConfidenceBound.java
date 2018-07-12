@@ -7,7 +7,7 @@ import java.util.List;
 public class UpperConfidenceBound extends Player {
 
 
-    public UpperConfidenceBound(String username, String name, String born) {
+    public UpperConfidenceBound(Username username, String name, String born) {
         super(username, name, born, "UCB");
     }
 

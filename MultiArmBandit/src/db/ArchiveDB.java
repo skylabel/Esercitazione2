@@ -22,7 +22,7 @@ public class ArchiveDB implements IArchiveDB {
 
     public void register(Player player) throws NullPointerException, SQLException, ClassNotFoundException, PlayerIsAlreadyPresentException {
         if (player.equals(null)) throw new NullPointerException();
-        if (isPresent(player)) {
+        if (isPresent(player.getUserName())) {
             throw new PlayerIsAlreadyPresentException();
         } else {
             int rate = 0;
@@ -34,14 +34,15 @@ public class ArchiveDB implements IArchiveDB {
         }
     }
 
-    public void delete(Player player) throws PlayerIsNotPresentException, SQLException, ClassNotFoundException {
-        if (player.equals(null)) throw new NullPointerException();
-        String query = "DELETE FROM player WHERE username = " + "'" + player.getUserName() + "';";
-        if (!isPresent(player)) throw new PlayerIsNotPresentException();
+    public void delete(String username) throws PlayerIsNotPresentException, SQLException, ClassNotFoundException {
+        if (username.equals(null)) throw new NullPointerException();
+        String query = "DELETE FROM player WHERE username = " + "'" + username + "';";
+        if (!isPresent(username)) throw new PlayerIsNotPresentException();
         deleteQuery(query);
     }
 
-    public Player getPlayer(String username) throws SQLException, ClassNotFoundException, PlayerDataCorruptionException, PlayerIsNotPresentException {
+    public Player getPlayer(String username) throws SQLException, ClassNotFoundException,
+            PlayerDataCorruptionException, PlayerIsNotPresentException, IllegalUsernameException {
         Player player = null;
         String query = "SELECT * FROM player WHERE  username=" + "'" + username + "';";
         ResultSet result = executeQuery(query);
@@ -52,16 +53,15 @@ public class ArchiveDB implements IArchiveDB {
 
         if (strategy.equals("UE")) {
             String rate = result.getString("rate");
-            player = new UniformExplorationPlayer(usname, name, birthdate, new ExplorationRate(result.getInt("rate")));
+            player = new UniformExplorationPlayer(new Username(usname), name, birthdate, new ExplorationRate(result.getInt("rate")));
         } else if (strategy.equals("UCB")) {
-            player = new UpperConfidenceBound(username, name, birthdate);
+            player = new UpperConfidenceBound(new Username(username), name, birthdate);
         } else throw new PlayerDataCorruptionException();
         return player;
     }
 
-
-    public boolean isPresent(Player player) throws SQLException, ClassNotFoundException {
-        String query = "SELECT * FROM player WHERE  username=" + "'" + player.getUserName() + "';";
+    public boolean isPresent(String username) throws SQLException, ClassNotFoundException {
+        String query = "SELECT * FROM player WHERE  username=" + "'" + username + "';";
         try {
             executeQuery(query);
         } catch (PlayerIsNotPresentException e) {
@@ -78,18 +78,12 @@ public class ArchiveDB implements IArchiveDB {
         //closeDbConnection();
     }
 
-    private void closeDbConnection() throws SQLException {
-        stmt.close();
-        conn.close();
-    }
-
-
     private void insertquery(String query) {
         try {
             getDBConnection();
             stmt = conn.prepareStatement(query);
             stmt.execute();
-           // closeDbConnection();
+            // closeDbConnection();
         } catch (SQLException | ClassNotFoundException e) {
             e.printStackTrace();
         }
@@ -99,7 +93,7 @@ public class ArchiveDB implements IArchiveDB {
         getDBConnection();
         stmt = conn.prepareStatement(query);
         stmt.executeUpdate();
-       // closeDbConnection();
+        // closeDbConnection();
     }
 
     private void getDBConnection() throws ClassNotFoundException, SQLException {

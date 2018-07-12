@@ -14,24 +14,27 @@ import org.junit.jupiter.api.Test;
 class TestArchive {
 	
 	private ArchiveDB archive;
+	private Player andrea, luca;
 	
 	@BeforeEach
-	private void initialize() throws SQLException, ClassNotFoundException {
+	private void initialize() throws SQLException, ClassNotFoundException, IllegalUsernameException {
 		archive = new ArchiveDB();
         archive.cleanPlayerTable();
+		andrea = createAndrea();
+		luca = createLuca();
 	}
 	
 	@Test
-	void testNewPlayerRegistration() throws NullPointerException, SQLException, ClassNotFoundException, PlayerIsAlreadyPresentException {
-		Player player = createAndrea();
-		assertFalse(archive.isPresent(player));//.getPlayers().contains(player));
-		archive.register(player);
-		assertTrue(archive.isPresent(player));
+	void testNewPlayerRegistration() throws NullPointerException, SQLException, ClassNotFoundException,
+			PlayerIsAlreadyPresentException {
+		assertFalse(archive.isPresent("Pippo"));
+		archive.register(andrea);
+		assertTrue(archive.isPresent("Pippo"));
 	}
 
 	@Test
-	void testExistingPlayerRegistration1() throws NullPointerException, PlayerIsAlreadyPresentException, SQLException, ClassNotFoundException {
-		Player andrea = createAndrea();
+	void testExistingPlayerRegistration1() throws NullPointerException, PlayerIsAlreadyPresentException,
+			SQLException, ClassNotFoundException {
 		archive.register(andrea);
 		assertThrows(PlayerIsAlreadyPresentException.class, ()->{archive.register(andrea);});
 	}
@@ -41,23 +44,20 @@ class TestArchive {
 		assertThrows(NullPointerException.class, ()->{archive.register(null);});
 	}
 
-
-
 	@Test
-	void testExistingPlayerRegistration2() throws NullPointerException, PlayerIsAlreadyPresentException, SQLException, ClassNotFoundException {
-		Player andrea = createAndrea();
+	void testExistingPlayerRegistration2() throws NullPointerException, PlayerIsAlreadyPresentException, SQLException,
+			ClassNotFoundException {
 		archive.register(andrea);
-		Player luca = createLuca();
 		archive.register(luca);
 		assertThrows(PlayerIsAlreadyPresentException.class, ()->{archive.register(andrea);});
 	}
 	
 	@Test
-	void testDeleteExistingPlayer() throws NullPointerException, PlayerIsAlreadyPresentException, PlayerIsNotPresentException, SQLException, ClassNotFoundException {
-		Player andrea = createAndrea();
+	void testDeleteExistingPlayer() throws NullPointerException, PlayerIsAlreadyPresentException, PlayerIsNotPresentException,
+			SQLException, ClassNotFoundException {
 		archive.register(andrea);
-		archive.delete(andrea);
-		assertFalse(archive.isPresent(andrea));
+		archive.delete("Pippo");
+		assertFalse(archive.isPresent("Pippo"));
 	}
 
 	@Test
@@ -67,29 +67,25 @@ class TestArchive {
 
 	@Test
 	void testDeleteNotExistingPlayer1() {
-		Player andrea = createAndrea();
-		assertThrows(PlayerIsNotPresentException.class, ()->{archive.delete(andrea);});
+		assertThrows(PlayerIsNotPresentException.class, ()->{archive.delete("Pippo");});
 	}
 
 	@Test
-	void testDeleteNotExistingPlayer2() throws NullPointerException, PlayerIsAlreadyPresentException, SQLException, ClassNotFoundException {
-		Player luca = createLuca();
+	void testDeleteNotExistingPlayer2() throws NullPointerException, PlayerIsAlreadyPresentException, SQLException,
+			ClassNotFoundException {
 		archive.register(luca);
-		Player andrea = createAndrea();
-		assertThrows(PlayerIsNotPresentException.class, ()->{archive.delete(andrea);});
+		assertThrows(PlayerIsNotPresentException.class, ()->{archive.delete("Pippo");});
 	}
 
-	
-	
-	private Player createAndrea() {
+	private Player createAndrea() throws IllegalUsernameException {
 		String birthdate=new String("1984-5-19");
-		Player player = new UpperConfidenceBound("pippo","Andrea", birthdate);
+		Player player = new UpperConfidenceBound(new Username("Pippo"),"Andrea", birthdate);
 		return player;
 	}
 	
-	private Player createLuca() {
+	private Player createLuca() throws IllegalUsernameException {
 		String birthdate=new String("1984-5-19");
-		Player luca = new UniformExplorationPlayer("topolino","Luca", birthdate, new ExplorationRate(100));
+		Player luca = new UniformExplorationPlayer(new Username("Topolino"),"Luca", birthdate, new ExplorationRate(100));
 		return luca;
 	}
 	
