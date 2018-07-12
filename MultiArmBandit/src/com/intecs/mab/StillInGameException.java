@@ -1,4 +1,4 @@
-package com.intecs.tddmab;
+package com.intecs.mab;
 
 public class StillInGameException extends Exception {
 	

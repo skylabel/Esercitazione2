@@ -1,64 +1,57 @@
 package com.intecs.mab;
 
-import java.util.GregorianCalendar;
 import java.util.List;
-
-import com.intecs.tddmab.MultiArm;
+import java.util.Objects;
 
 public abstract class Player {
 
-	private String name;
-	private GregorianCalendar born;
-	
-	public Player(String Name, GregorianCalendar born) {
-       this.born=born;
-       this.name=Name;
-	}
-	
-	public abstract List<Integer>  playgame(MultiArm multiArm);
-	public abstract void reset(MultiArm multiArm);
-	
-	public String getName() {
-		return name;
-	}
+    private String username;
+    private String name;
+    private String born;
+    private String strategyType;
 
-	public GregorianCalendar getBorn() {
-		return born;
-	}
+    public Player(String username, String playerName, String birthdate, String strategyType) {
+        if (playerName.equals(null) || birthdate.equals(null) || strategyType.equals(null))
+            throw new NullPointerException();
+        this.username=username;
+        this.born = birthdate;
+        this.name = playerName;
+        this.strategyType = strategyType;
+    }
 
-	@Override
-	public int hashCode() {
-		final int prime = 31;
-		int result = 1;
-		result = prime * result + ((born == null) ? 0 : born.hashCode());
-		result = prime * result + ((name == null) ? 0 : name.hashCode());
-		return result;
-	}
+    public abstract List<Integer> playgame(MultiArm multiArm);
 
-	@Override
-	public boolean equals(Object obj) {
-		if (this == obj)
-			return true;
-		if (obj == null)
-			return false;
-		if (getClass() != obj.getClass())
-			return false;
-		Player other = (Player) obj;
-		if (born == null) {
-			if (other.born != null)
-				return false;
-		} else if (!born.equals(other.born))
-			return false;
-		if (name == null) {
-			if (other.name != null)
-				return false;
-		} else if (!name.equals(other.name))
-			return false;
-		return true;
-	}
-	
-	
-	
-	
-	
+    public abstract void reset(MultiArm multiArm);
+
+    public String getUserName() {
+        return username;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public String getStrategyType() {
+        return strategyType;
+    }
+
+    public String getBorn() {
+        return born;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Player player = (Player) o;
+        return  Objects.equals(username, player.username) &&
+                Objects.equals(name, player.name) &&
+                Objects.equals(born, player.born) &&
+                Objects.equals(strategyType, player.strategyType);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(username, name, born, strategyType);
+    }
 }

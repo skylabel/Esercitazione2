@@ -4,7 +4,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 import org.junit.jupiter.api.Test;
 
-import com.intecs.tddmab.Reward;
+import com.intecs.mab.Reward;
 
 class TestReward {
 

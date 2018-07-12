@@ -1,4 +1,4 @@
-package com.intecs.tddmab;
+package com.intecs.mab;
 
 import org.apache.commons.math3.distribution.BinomialDistribution;
 

@@ -1,4 +1,4 @@
-package com.intecs.tddmab;
+package com.intecs.mab;
 
 public class Bandit {
 	
@@ -15,6 +15,10 @@ public class Bandit {
 
 	public Reward pull() {
 		return ber.getSample();
+	}
+
+	double getWinProbability() {
+		return ber.getProbabilityOfSuccess();
 	}
 
 	
