@@ -19,6 +19,7 @@ public abstract class Player {
         this.strategyType = strategyType;
     }
 
+
     public abstract List<Integer> playgame(MultiArm multiArm);
 
     public abstract void reset(MultiArm multiArm);
