@@ -14,12 +14,15 @@ public class TestApplication {
 
     private IArchiveDB archive;
     private Application application;
+    private Username pippo, topolino;
 
     @BeforeEach
-    private void initialize() throws SQLException, ClassNotFoundException {
+    private void initialize() throws SQLException, ClassNotFoundException, IllegalUsernameException {
         archive = new ArchiveDB();
         archive.cleanPlayerTable();
         application = new Application(archive);
+        pippo = new Username("Pippo");
+        topolino = new Username("Topolino");
     }
 
     @Test
@@ -30,54 +33,53 @@ public class TestApplication {
     }
 
     @Test
-    void testCorrectPlayerLogin() throws PlayerIsAlreadyPresentException, SQLException, ClassNotFoundException,
-            PlayerDataCorruptionException, PlayerIsNotPresentException, IllegalUsernameException {
-        Player player = createUniformPlayer("Pippo");
-        application.registerUser(player);
-        assertEquals(player,application.login("Pippo"));
-
+    void testCorrectPlayerLogin_() throws PlayerIsAlreadyPresentException, SQLException, 
+    ClassNotFoundException, PlayerDataCorruptionException, PlayerIsNotPresentException, 
+    IllegalUsernameException {
+    	Player player = createUniformPlayer(pippo);
+    	application.registerUser(player);
+    	assertEquals(player,application.login_(pippo));
     }
 
     @Test
     void testRegistrationNewPlayer() throws ClassNotFoundException, PlayerIsAlreadyPresentException,
-            SQLException, IllegalUsernameException {
-        Player player = createUniformPlayer("Pippo");
+    SQLException, IllegalUsernameException {
+        Player player = createUniformPlayer(pippo);
         application.registerUser(player);
         assertTrue(archive.isPresent("Pippo"));
     }
 
     @Test
     void testRegistrationExistingPlayer() throws ClassNotFoundException, PlayerIsAlreadyPresentException,
-            SQLException, IllegalUsernameException {
-        Player player = createUniformPlayer("Pippo");
+    SQLException, IllegalUsernameException {
+        Player player = createUniformPlayer(pippo);
         application.registerUser(player);
         assertThrows(PlayerIsAlreadyPresentException.class, () -> {
-            application.registerUser(player);
+        	application.registerUser(player);
         });
     }
 
     @Test
     void testUnregistrationExistingPlayer() throws ClassNotFoundException, PlayerIsAlreadyPresentException,
-            SQLException, PlayerIsNotPresentException, IllegalUsernameException {
-        Player player = createUniformPlayer("Pippo");
-        application.registerUser(player);
-        application.unregisterPlayer(player);
-        assertFalse(archive.isPresent("Pippo"));
+    SQLException, PlayerIsNotPresentException, IllegalUsernameException {
+    	Player player = createUniformPlayer(pippo);
+    	application.registerUser(player);
+    	application.unregisterPlayer(pippo);
+    	assertFalse(archive.isPresent("Pippo"));
     }
 
     @Test
     void testUnregistrationNotExistingPlayer() throws IllegalUsernameException {
-        Player player = createUniformPlayer("Pippo");
+        Player player = createUniformPlayer(pippo);
         assertThrows(PlayerIsNotPresentException.class, () -> {
-            application.unregisterPlayer(player);
+            application.unregisterPlayer(pippo);
         });
     }
 
-    private Player createUniformPlayer(String usernname) throws IllegalUsernameException {
-        Username uname = new Username(usernname);
-        ExplorationRate rate = new ExplorationRate(50);
-        String birthdate=new String("1984-07-14");
-        return new UniformExplorationPlayer(uname,"Luca", birthdate, rate);
+    private Player createUniformPlayer(Username username) throws IllegalUsernameException {
+    	ExplorationRate rate = new ExplorationRate(50);
+    	String birthdate=new String("1984-07-14");
+    	return new UniformExploration(username, "Luca", birthdate, rate);
     }
 
 }

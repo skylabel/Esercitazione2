@@ -5,67 +5,53 @@ import java.util.Calendar;
 import java.util.GregorianCalendar;
 import java.util.List;
 
+import math.VectorCalculus;
+
 public class UpperConfidenceBound extends Player {
 
 
     public UpperConfidenceBound(Username username, String name, String born) {
         super(username, name, born, "UCB");
-
-
     }
+    
     @Override
-    public List<Integer> playgame(MultiArm multiArm) {
-
-        double probabilityEstimation[] = new double[multiArm.getNumberOfBandits()];
-        double upperConfidenceBounds[] = new double[multiArm.getNumberOfBandits()];
-        List<Integer> pullSequence = new ArrayList<>();
-
+    public int[] playgame(MultiArm multiArm) {
+    	int K = multiArm.getNumberOfBandits();
+    	int T = multiArm.getcounterBound();
+        double sampleMean[] = new double[K];
+        double upperConfidenceBounds[] = new double[K];
+        int[] pullSequence = new int[T];
         int numberOfPulls[] = new int[multiArm.getNumberOfBandits()];
 
-        Reward reward = null;
-        for (int j = 0; j < multiArm.getNumberOfBandits(); j++) {
+    	double reward = 0;
+        for (int j = 0; j < K; j++) {
             try {
-                reward = multiArm.pullBandit(j);
-                pullSequence.add(j);
+                reward = multiArm.pullBandit(j).getValue();
+                pullSequence[j] = j;
             } catch (LastRoundReachedException e) {
             }
-            probabilityEstimation[j] = (double) reward.getValue();
+            sampleMean[j] = reward;
             numberOfPulls[j] = numberOfPulls[j] + 1;
         }
 
-        int remaingRounds = multiArm.getcounterBound() - multiArm.getNumberOfBandits();
+        int remaingRounds = T - K;
         double radius;
         int bestBanditIdx;
         for (int j = 0; j < remaingRounds; j++) {
-            for (int i = 0; i < multiArm.getNumberOfBandits(); i++) {
-                radius = Math.sqrt(2 * Math.log(multiArm.getcounterBound()) / (numberOfPulls[i]));
-                upperConfidenceBounds[i] = probabilityEstimation[i] + radius;
+            for (int i = 0; i < K; i++) {
+                radius = Math.sqrt(2 * Math.log(T) / (numberOfPulls[i]));
+                upperConfidenceBounds[i] = sampleMean[i] + radius;
             }
-            bestBanditIdx = argMax(upperConfidenceBounds);
-            pullSequence.add(bestBanditIdx);
+            bestBanditIdx = VectorCalculus.argMax(upperConfidenceBounds);
+            pullSequence[K+j] = bestBanditIdx;
             try {
-                reward = multiArm.pullBandit(bestBanditIdx);
+                reward = multiArm.pullBandit(bestBanditIdx).getValue();
             } catch (LastRoundReachedException e) {
             }
             numberOfPulls[bestBanditIdx] = numberOfPulls[bestBanditIdx] + 1;
-            probabilityEstimation[bestBanditIdx] = probabilityEstimation[bestBanditIdx] + ((double) reward.getValue() - probabilityEstimation[bestBanditIdx]) / numberOfPulls[bestBanditIdx];
+            sampleMean[bestBanditIdx] = sampleMean[bestBanditIdx] + (reward - sampleMean[bestBanditIdx]) / numberOfPulls[bestBanditIdx];
         }
         return pullSequence;
     }
-
-    @Override
-    public void reset(MultiArm multiArm) {
-    }
-
-    private int argMax(double[] v) {
-        int max = 0;
-        for (int i = 0; i < v.length; i++) {
-            if (v[max] < v[i]) {
-                max = i;
-            }
-        }
-        return max;
-    }
-
 
 }

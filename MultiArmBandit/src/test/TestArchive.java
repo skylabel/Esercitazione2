@@ -85,7 +85,7 @@ class TestArchive {
 	
 	private Player createLuca() throws IllegalUsernameException {
 		String birthdate=new String("1984-5-19");
-		Player luca = new UniformExplorationPlayer(new Username("Topolino"),"Luca", birthdate, new ExplorationRate(100));
+		Player luca = new UniformExploration(new Username("Topolino"),"Luca", birthdate, new ExplorationRate(100));
 		return luca;
 	}
 	

@@ -19,10 +19,7 @@ public abstract class Player {
         this.strategyType = strategyType;
     }
 
-
-    public abstract List<Integer> playgame(MultiArm multiArm);
-
-    public abstract void reset(MultiArm multiArm);
+    public abstract int[] playgame(MultiArm multiArm);
 
     public String getUserName() {
         return username.getValue();

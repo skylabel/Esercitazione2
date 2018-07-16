@@ -8,23 +8,40 @@ import java.sql.SQLException;
 
 public class Main {
 
-    public static void main(String[] args) throws ClassNotFoundException, SQLException, PlayerIsNotPresentException,
-            PlayerIsAlreadyPresentException, PlayerDataCorruptionException, LoginRequiredException, IllegalUsernameException {
-        Player uniformPlayer = createLuca();
-        IArchiveDB archive = new ArchiveDB();
-
-        Application application = new Application(archive);
+    public static void main(String[] args) throws ClassNotFoundException, SQLException, 
+    PlayerIsNotPresentException, PlayerIsAlreadyPresentException, PlayerDataCorruptionException, 
+    LoginRequiredException, IllegalUsernameException {
+        Application application = new Application(getCleanDB());
+        
+        Username pippo = new Username("Pippo");
+        Player uniformPlayer = createDefaultUniformPlayer(pippo);
         application.registerUser(uniformPlayer);
-        application.login("Topolino");
+        application.login_(pippo);
+        application.play();
+        
+        Username topolino = new Username("Topolino");
+        Player ucbPlayer = createUCBPlayer(topolino);
+        application.registerUser(ucbPlayer);
+        application.login_(topolino);
         application.play();
     }
 
-	private static Player createLuca() throws IllegalUsernameException {
+	private static IArchiveDB getCleanDB() throws ClassNotFoundException, SQLException {
+		IArchiveDB archive = new ArchiveDB();
+        archive.cleanPlayerTable();
+		return archive;
+	}
+
+	private static Player createDefaultUniformPlayer(Username username) throws IllegalUsernameException {
         ExplorationRate rate = new ExplorationRate(50);
         String birthdate = new String("1984-06-19");
-        Username username=new Username("Topolino");
-		Player uniformPlayer = new UniformExplorationPlayer(username,"Luca", birthdate, rate);
+		Player uniformPlayer = new UniformExploration(username,"Luca", birthdate, rate);
 		return uniformPlayer;
+	}
+
+	private static Player createUCBPlayer(Username username) throws IllegalUsernameException {
+		String birthdate = new String("1987-11-24");
+		return new UpperConfidenceBound(username, "Andrea", birthdate);
 	}
 
 }

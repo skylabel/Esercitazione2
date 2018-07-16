@@ -11,9 +11,9 @@ import com.intecs.mab.*;
 public class ArchiveDB implements IArchiveDB {
 
     static final String JDBC_DRIVER = "com.mysql.cj.jdbc.Driver";
-    static final String DB_URL = "jdbc:mysql://localhost/multiarmbanditdb?autoReconnect=true&useSSL=false&serverTimezone=UTC";
+    static final String DB_URL = "jdbc:mysql://localhost/prova?autoReconnect=true&useSSL=false&serverTimezone=UTC";
     static final String USER = "root";
-    static final String PASS = "a.12345678";
+    static final String PASS = "intecs2018";
     private Connection conn = null;
     private PreparedStatement stmt = null;
 
@@ -26,7 +26,7 @@ public class ArchiveDB implements IArchiveDB {
             throw new PlayerIsAlreadyPresentException();
         } else {
             int rate = 0;
-            if (player instanceof UniformExplorationPlayer) rate = ((UniformExplorationPlayer) player).getRate();
+            if (player instanceof UniformExploration) rate = ((UniformExploration) player).getRateValue();
             String DateToStr = player.getBorn();
             String query = "INSERT INTO player (username, name, strategy, rate, birthdate) VALUES ('" + player.getUserName()
                     + "','" + player.getName() + "','" + player.getStrategyType() + "','" + rate + "','" + DateToStr + "')";
@@ -53,7 +53,7 @@ public class ArchiveDB implements IArchiveDB {
 
         if (strategy.equals("UE")) {
             String rate = result.getString("rate");
-            player = new UniformExplorationPlayer(new Username(usname), name, birthdate, new ExplorationRate(result.getInt("rate")));
+            player = new UniformExploration(new Username(usname), name, birthdate, new ExplorationRate(result.getInt("rate")));
         } else if (strategy.equals("UCB")) {
             player = new UpperConfidenceBound(new Username(username), name, birthdate);
         } else throw new PlayerDataCorruptionException();

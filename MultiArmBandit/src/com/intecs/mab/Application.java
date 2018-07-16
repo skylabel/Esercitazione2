@@ -18,18 +18,18 @@ public class Application {
 
     public Application(IArchiveDB archive) {
         int numberOfRounds = 10000;
-        int numberOfBandits = 50;
+        int numberOfBandits = 100;
         double[] assignedProbs = initializeProbablity(numberOfBandits);
         multiArm = initializeMultiArm(numberOfRounds, assignedProbs);
         this.archive = archive;
         currentPlayer = null;
     }
 
-    public Player login(String username) throws SQLException, PlayerDataCorruptionException,
-            ClassNotFoundException, PlayerIsNotPresentException, IllegalUsernameException {
-        this.currentPlayer = archive.getPlayer(username);
-        Player player = this.currentPlayer;
-        return player;
+    public Player login_(Username username) throws SQLException, PlayerDataCorruptionException,
+    ClassNotFoundException, PlayerIsNotPresentException, IllegalUsernameException {
+    	this.currentPlayer = archive.getPlayer(username.getValue());
+    	Player player = this.currentPlayer;
+    	return player;
     }
 
     public void registerUser(Player player) throws PlayerIsAlreadyPresentException, SQLException, ClassNotFoundException {
@@ -45,36 +45,44 @@ public class Application {
         }
     }
 
-    public void unregisterPlayer(Player player) throws PlayerIsNotPresentException, SQLException, ClassNotFoundException {
-        archive.delete(player.getUserName());
+    public void play_(int numberOfRepetitions) throws LoginRequiredException {
+    	if (currentPlayer == null) {
+    		throw new LoginRequiredException();
+    	} else {
+    		computeRegret(multiArm, numberOfRepetitions, currentPlayer);
+    	}
     }
 
+    public void unregisterPlayer(Username username) throws PlayerIsNotPresentException, SQLException, ClassNotFoundException {
+    	archive.delete(username.getValue());
+    }
+    
     private double[][] computeRegret(MultiArm multiarm, int rep, Player player) {
-        Double bestProbability = max(multiArm.getProbabilityList());
-        double[] assignedProbs = multiarm.getProbabilityList();
-        int T = multiarm.getcounterBound();
-        double[][] regret = new double[rep][T];
-        for (int r = 0; r < rep; r++) {
-            regret[r][0] = 0d;
-            List<Integer> indexBandit = player.playgame(multiarm);
-            double temp = 0;
-            for (int i = 1; i < T; i++) {
-                temp = temp + assignedProbs[indexBandit.get(i)];
-                regret[r][i] = bestProbability * i - temp;
-            }
-        }
-        double[] meanRegret = new double[T];
-        double[] xDat = new double[T];
-        for (int i = 0; i < T; i++) {
-            xDat[i] = i;
-            for (int r = 0; r < rep; r++) {
-                meanRegret[i] = meanRegret[i] + regret[r][i];
-            }
-            meanRegret[i] = meanRegret[i] / rep;
-        }
-        XYChart chart = QuickChart.getChart("Mean Regret", "T", "E[R(T)]", "r(t)", xDat, meanRegret);
-        new SwingWrapper<XYChart>(chart).displayChart();
-        return regret;
+    	Double bestProbability = max(multiArm.getProbabilityList());
+    	double[] assignedProbs = multiarm.getProbabilityList();
+    	int T = multiarm.getcounterBound();
+    	double[][] regret = new double[rep][T];
+    	for (int r = 0; r < rep; r++) {
+    		regret[r][0] = 0d;
+    		int[] indexBandit = player.playgame(multiarm);
+    		double temp = 0;
+    		for (int i = 1; i < T; i++) {
+    			temp = temp + assignedProbs[indexBandit[i]];
+    			regret[r][i] = bestProbability * i - temp;
+    		}
+    	}
+    	double[] meanRegret = new double[T];
+    	double[] xDat = new double[T];
+    	for (int i = 0; i < T; i++) {
+    		xDat[i] = i;
+    		for (int r = 0; r < rep; r++) {
+    			meanRegret[i] = meanRegret[i] + regret[r][i];
+    		}
+    		meanRegret[i] = meanRegret[i] / rep;
+    	}
+    	XYChart chart = QuickChart.getChart("Average Regret", "T", "E[R(T)]", "r(t)", xDat, meanRegret);
+    	new SwingWrapper<XYChart>(chart).displayChart();
+    	return regret;
     }
 
     private double[] initializeProbablity(int K) {
