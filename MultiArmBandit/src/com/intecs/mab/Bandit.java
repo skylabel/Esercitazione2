@@ -1,25 +1,9 @@
 package com.intecs.mab;
 
-public class Bandit {
+public abstract class Bandit {
 	
-	private BernulliDistribution ber;
-	
-	public Bandit() {
-		this(new WinProbability(1d));
-	}
+	public abstract Reward pull();
 
-	public Bandit(WinProbability p) {
-		if(p==null) throw new NullPointerException("Bandit con argomento NULL");
-		ber = new BernulliDistribution(p);
-	}
+	abstract double getMean();
 
-	public Reward pull() {
-		return ber.getSample();
-	}
-
-	double getWinProbability() {
-		return ber.getProbabilityOfSuccess();
-	}
-
-	
 }

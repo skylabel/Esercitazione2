@@ -4,8 +4,8 @@ import static org.junit.jupiter.api.Assertions.*;
 
 import org.junit.jupiter.api.Test;
 
-import com.intecs.mab.LastRoundReachedException;
 import com.intecs.mab.RoundCounter;
+import com.intecs.mab.exception.LastRoundReachedException;
 
 class TestRoundCounter {
 

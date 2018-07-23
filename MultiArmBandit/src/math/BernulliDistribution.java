@@ -1,6 +1,9 @@
-package com.intecs.mab;
+package math;
 
 import org.apache.commons.math3.distribution.BinomialDistribution;
+
+import com.intecs.mab.Reward;
+import com.intecs.mab.WinProbability;
 
 public class BernulliDistribution extends BinomialDistribution {
 

@@ -1,4 +1,4 @@
 package db;
 
-public class PlayerDataCorruptionException extends Exception {
+public class PlayerDataCorruptionException extends RuntimeException {
 }

@@ -6,117 +6,104 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-import com.intecs.mab.*;
+import com.intecs.mab.IArchiveDB;
 
 public class ArchiveDB implements IArchiveDB {
 
-    static final String JDBC_DRIVER = "com.mysql.cj.jdbc.Driver";
-    static final String DB_URL = "jdbc:mysql://localhost/prova?autoReconnect=true&useSSL=false&serverTimezone=UTC";
-    static final String USER = "root";
-    static final String PASS = "intecs2018";
-    private Connection conn = null;
-    private PreparedStatement stmt = null;
+	static final String JDBC_DRIVER = "com.mysql.cj.jdbc.Driver";
+	static final String DB_URL = "jdbc:mysql://localhost/multiarmbanditdb?autoReconnect=true&useSSL=false&serverTimezone=UTC";
+	static final String USER = "root";
+	static final String PASS = "a.12345678";
+	private Connection conn = null;
+	private PreparedStatement stmt = null;
 
-    public ArchiveDB() {
-    }
+	private static ArchiveDB instance = null;
 
-    public void register(Player player) throws NullPointerException, SQLException, ClassNotFoundException, PlayerIsAlreadyPresentException {
-        if (player.equals(null)) throw new NullPointerException();
-        if (isPresent(player.getUserName())) {
-            throw new PlayerIsAlreadyPresentException();
-        } else {
-            int rate = 0;
-            if (player instanceof UniformExploration) rate = ((UniformExploration) player).getRateValue();
-            String DateToStr = player.getBorn();
-            String query = "INSERT INTO player (username, name, strategy, rate, birthdate) VALUES ('" + player.getUserName()
-                    + "','" + player.getName() + "','" + player.getStrategyType() + "','" + rate + "','" + DateToStr + "')";
-            insertquery(query);
-        }
-    }
+	private ArchiveDB() {
+	}
 
-    public void delete(String username) throws PlayerIsNotPresentException, SQLException, ClassNotFoundException {
-        if (username.equals(null)) throw new NullPointerException();
-        String query = "DELETE FROM player WHERE username = " + "'" + username + "';";
-        if (!isPresent(username)) throw new PlayerIsNotPresentException();
-        deleteQuery(query);
-    }
+	public static ArchiveDB getInstance() {
+		if (instance == null)
+			instance = new ArchiveDB();
+		return instance;
+	}
 
-    public Player getPlayer(String username) throws SQLException, ClassNotFoundException,
-            PlayerDataCorruptionException, PlayerIsNotPresentException, IllegalUsernameException {
-        Player player = null;
-        String query = "SELECT * FROM player WHERE  username=" + "'" + username + "';";
-        ResultSet result = executeQuery(query);
-        String usname = result.getString("username");
-        String name = result.getString("name");
-        String strategy = result.getString("strategy");
-        String birthdate = result.getString("birthdate");
+	@Override
+	public void insert(String query) throws SQLException {
+		getDBConnection();
+		stmt = conn.prepareStatement(query);
+		stmt.execute();
 
-        if (strategy.equals("UE")) {
-            String rate = result.getString("rate");
-            player = new UniformExploration(new Username(usname), name, birthdate, new ExplorationRate(result.getInt("rate")));
-        } else if (strategy.equals("UCB")) {
-            player = new UpperConfidenceBound(new Username(username), name, birthdate);
-        } else throw new PlayerDataCorruptionException();
-        return player;
-    }
+	}
 
-    public boolean isPresent(String username) throws SQLException, ClassNotFoundException {
-        String query = "SELECT * FROM player WHERE  username=" + "'" + username + "';";
-        try {
-            executeQuery(query);
-        } catch (PlayerIsNotPresentException e) {
-            return false;
-        }
-        return true;
-    }
+	@Override
+	public void deleteQuery(String query) {
+		getDBConnection();
+		try {
+			stmt = conn.prepareStatement(query);
+			stmt.executeUpdate();
+		} catch (SQLException e) {
+			throw new IllegalStateException();
+		}
+	}
 
-    public void cleanPlayerTable() throws ClassNotFoundException, SQLException {
-        String query = "DELETE FROM player";
-        getDBConnection();
-        stmt = conn.prepareStatement(query);
-        stmt.executeUpdate();
-        //closeDbConnection();
-    }
+	private void getDBConnection() {
+		try {
+			Class.forName(JDBC_DRIVER);
+			conn = DriverManager.getConnection(DB_URL, USER, PASS);
 
-    private void insertquery(String query) {
-        try {
-            getDBConnection();
-            stmt = conn.prepareStatement(query);
-            stmt.execute();
-            // closeDbConnection();
-        } catch (SQLException | ClassNotFoundException e) {
-            e.printStackTrace();
-        }
-    }
+		} catch (ClassNotFoundException e) {
+			throw new IllegalStateException("Invalid DB connection: " + JDBC_DRIVER);
 
-    private void deleteQuery(String query) throws ClassNotFoundException, SQLException {
-        getDBConnection();
-        stmt = conn.prepareStatement(query);
-        stmt.executeUpdate();
-        // closeDbConnection();
-    }
+		} catch (SQLException e) {
+			throw new IllegalStateException("Invalid DB connection: " + DB_URL + " " + "USER" + "/" + "PASS");
+		}
+	}
 
-    private void getDBConnection() throws ClassNotFoundException, SQLException {
-        Class.forName(JDBC_DRIVER);
-        conn = DriverManager.getConnection(DB_URL, USER, PASS);
-    }
+	@Override
+	public ResultSet executeQuery(String query) {
+		getDBConnection();
+		ResultSet rs = null;
+		try {
+			stmt = conn.prepareStatement(query);
+			rs = stmt.executeQuery();
+		} catch (SQLException e) {
+			throw new IllegalStateException();
+		}
 
-    private ResultSet executeQuery(String query) throws PlayerIsNotPresentException, SQLException, ClassNotFoundException {
-        getDBConnection();
-        stmt = conn.prepareStatement(query);
-        ResultSet rs = stmt.executeQuery();
-        resultIsEmpty(rs);
-        rs.next();
-        return rs;
-    }
+		return rs;
+	}
 
-    private void resultIsEmpty(ResultSet rs) throws PlayerIsNotPresentException {
-        try {
-            if (!rs.next()) throw new PlayerIsNotPresentException();
-            rs.previous();
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-    }
+	@Override
+	public void updateQuery(String query) {
+
+	}
+
+	@Override
+	public boolean isPresent(String username) {
+		String query = "SELECT * FROM player WHERE  username=" + "'" + username + "';";
+		ResultSet result = executeQuery(query);
+		boolean res=false;
+		try {
+			if (result.next())
+			    res = true;
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return res;
+	}
+
+	@Override
+	public void cleanPlayerTable() {
+		String query = "DELETE FROM player";
+		getDBConnection();
+		try {
+			stmt = conn.prepareStatement(query);
+			stmt.executeUpdate();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+
+	}
 
 }

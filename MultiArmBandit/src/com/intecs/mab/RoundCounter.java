@@ -1,5 +1,7 @@
 package com.intecs.mab;
 
+import com.intecs.mab.exception.LastRoundReachedException;
+
 public class RoundCounter {
 	
 	private Integer numberOfRounds;

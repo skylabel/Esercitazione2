@@ -1,20 +1,35 @@
 package com.intecs.mab;
 import java.util.Objects;
 import java.util.regex.Pattern;
+
+import com.intecs.mab.exception.IllegalUsernameException;
+
 import java.util.regex.Matcher;
 
 public class Username {
 
     String username;
 
-    public Username(String username) throws IllegalUsernameException {
-          if(checkUserValidity(username))
-              this.username = username;
-         else
-             throw new IllegalUsernameException();
+    private Username(String username) {
+         this.username=username;
     }
-
-    private boolean checkUserValidity(String username) {
+    
+    
+    public static Username createUserNameByUser(String username) throws IllegalUsernameException {
+    	 if(!checkUserValidity(username))  throw new IllegalUsernameException();
+           
+         else return new Username(username);
+           
+    }
+    public static Username getUserNamefromDB(String username)   {
+    	if(!checkUserValidity(username))  throw new IllegalStateException("UsernName: "+username +" Corrupted in db");
+    	
+    	else return new Username(username);
+    	
+    }
+    
+    
+    private static boolean checkUserValidity(String username) {
         Pattern p = Pattern.compile("^[A-Z][a-z0-9_-]{3,16}$");
         Matcher m = p.matcher(username);
         return m.find();
@@ -36,4 +51,11 @@ public class Username {
     public int hashCode() {
         return Objects.hash(username);
     }
+
+	@Override
+	public String toString() {
+		return "Username [username=" + username + "]";
+	}
+
+
 }

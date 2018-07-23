@@ -5,7 +5,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import org.junit.jupiter.api.Test;
 
-import com.intecs.mab.Bandit;
+import com.intecs.mab.BinaryBandit;
 import com.intecs.mab.Reward;
 
 class TestBandit {
@@ -13,7 +13,7 @@ class TestBandit {
 	
 	@Test
 	void testDefaultWinnerBandit() {
-		Bandit bandit=new Bandit();
+		BinaryBandit bandit=new BinaryBandit();
 		assertEquals(new Reward(1),bandit.pull());
 		assertEquals(new Reward(1),bandit.pull());
 		assertEquals(new Reward(1),bandit.pull());
@@ -22,7 +22,7 @@ class TestBandit {
 	
 	@Test
 	void testBanditNullArgument() {
-		assertThrows(NullPointerException.class, ()->{new Bandit(null);});
+		assertThrows(NullPointerException.class, ()->{new BinaryBandit(null);});
 	}
 	
 

@@ -1,4 +1,4 @@
-package com.intecs.mab;
+package com.intecs.player;
 
 public class ExplorationRate {
 

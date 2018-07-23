@@ -1,7 +1,8 @@
-package com.intecs.mab;
+package com.intecs.player;
 
-import java.util.ArrayList;
-import java.util.List;
+import com.intecs.mab.MultiArm;
+import com.intecs.mab.Username;
+import com.intecs.mab.exception.LastRoundReachedException;
 
 import math.VectorCalculus;
 
@@ -21,7 +22,7 @@ public class UniformExploration extends Player {
 
     public int[] playgame(MultiArm multiArm) {
     	int K = multiArm.getNumberOfBandits();
-    	int T = multiArm.getcounterBound();
+    	int T = multiArm.getCounterBound();
     	int R = getRateValue();
     	int[] pullSequence = new int[T];
     	double[] sampleMean = new double[K];
@@ -30,7 +31,7 @@ public class UniformExploration extends Player {
     	for (int j = 0; j < K; j++) {
     		for (int i = 0; i < R; i++) {
     			try {
-    				reward[i] = multiArm.pullBandit(j).getValue();
+    				reward[i] = multiArm.pullBandit(j).getIntegerValue();
     				pullSequence[j*R + i] = j;
     			} catch (LastRoundReachedException e) {
     			}

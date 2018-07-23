@@ -14,7 +14,6 @@ public class StrategyType {
         return type;
     }
 
-
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -28,4 +27,5 @@ public class StrategyType {
 
         return Objects.hash(type);
     }
+    
 }

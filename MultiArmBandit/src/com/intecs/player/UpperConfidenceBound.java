@@ -1,9 +1,8 @@
-package com.intecs.mab;
+package com.intecs.player;
 
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.GregorianCalendar;
-import java.util.List;
+import com.intecs.mab.MultiArm;
+import com.intecs.mab.Username;
+import com.intecs.mab.exception.LastRoundReachedException;
 
 import math.VectorCalculus;
 
@@ -17,7 +16,7 @@ public class UpperConfidenceBound extends Player {
     @Override
     public int[] playgame(MultiArm multiArm) {
     	int K = multiArm.getNumberOfBandits();
-    	int T = multiArm.getcounterBound();
+    	int T = multiArm.getCounterBound();
         double sampleMean[] = new double[K];
         double upperConfidenceBounds[] = new double[K];
         int[] pullSequence = new int[T];
@@ -26,7 +25,7 @@ public class UpperConfidenceBound extends Player {
     	double reward = 0;
         for (int j = 0; j < K; j++) {
             try {
-                reward = multiArm.pullBandit(j).getValue();
+                reward = multiArm.pullBandit(j).getIntegerValue();
                 pullSequence[j] = j;
             } catch (LastRoundReachedException e) {
             }
@@ -45,7 +44,7 @@ public class UpperConfidenceBound extends Player {
             bestBanditIdx = VectorCalculus.argMax(upperConfidenceBounds);
             pullSequence[K+j] = bestBanditIdx;
             try {
-                reward = multiArm.pullBandit(bestBanditIdx).getValue();
+                reward = multiArm.pullBandit(bestBanditIdx).getIntegerValue();
             } catch (LastRoundReachedException e) {
             }
             numberOfPulls[bestBanditIdx] = numberOfPulls[bestBanditIdx] + 1;

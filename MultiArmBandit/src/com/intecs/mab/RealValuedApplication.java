@@ -15,15 +15,14 @@ import com.intecs.player.Player;
 import db.ArchiveDB;
 import math.VectorCalculus;
 
-public class Application {
+public class RealValuedApplication {
 
-	private MultiArm multiArm;
+	private RealValuedMultiArm multiArm;
 	private Player currentPlayer;
 
-	public Application() {
+	public RealValuedApplication() {
 		int numberOfRounds = 10000;
 		int numberOfBandits = 10;
-//		multiArm = BinaryValuedMultiArm.initialize(numberOfBandits, numberOfRounds);
 		multiArm = RealValuedMultiArm.initialize(numberOfBandits, numberOfRounds);
 		currentPlayer = null;
 	}
@@ -85,7 +84,7 @@ public class Application {
 		game.saveGame();
 		return regret;
 	}
-
+	
 	private List<Pair> getPlayerBestGames() throws IllegalUsernameException{
 		List<Pair> rank = new ArrayList<>();
 		Player.findAllPlayers().forEach((Player player)->{

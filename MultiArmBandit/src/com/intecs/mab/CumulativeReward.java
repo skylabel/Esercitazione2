@@ -17,7 +17,7 @@ public class CumulativeReward {
 	}
 	
 	public void addReward(Reward reward) {
-		value = value + reward.getValue();
+		value = value + reward.getIntegerValue();
 	}
 
 	public Double getValue() {

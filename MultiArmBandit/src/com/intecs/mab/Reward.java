@@ -2,15 +2,24 @@ package com.intecs.mab;
 
 public class Reward {
 
-	private Integer value;
+	private double value;
 	
-	public Reward(Integer i) {
-		if (i!=0 && i!=1)
-			throw new IllegalArgumentException();
-		
+	public Reward(double i) {
 		value = i;
 	}
+	
+	public static Reward createIntegerReward(int i) {
+		if (i!=0 && i!=1)
+			throw new IllegalArgumentException();
+		return new Reward((double) i);
+	}
 
+	public static Reward createRealReward(double i) {
+		if (i<0 || i>1)
+			throw new IllegalArgumentException();
+		return new Reward((double) i);
+	}
+	
 	@Override
 	public boolean equals(Object obj) {
 		if (this == obj) return true;
@@ -22,9 +31,7 @@ public class Reward {
         return result;
 	}
 
-	public Integer getValue() {
-		return value;
+	public Integer getIntegerValue() {
+		return (int)value;
 	}
-	
-	
 }

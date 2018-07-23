@@ -1,15 +1,17 @@
 package com.intecs.mab;
 
-import db.PlayerDataCorruptionException;
-
+import java.sql.ResultSet;
 import java.sql.SQLException;
+
+import com.intecs.mab.exception.PlayerIsNotPresentException;
 
 public interface IArchiveDB {
 
-    public void register(Player player) throws SQLException, ClassNotFoundException, PlayerIsAlreadyPresentException;
-    public void delete(String username) throws PlayerIsNotPresentException, SQLException, ClassNotFoundException;
     public boolean isPresent(String username) throws SQLException, ClassNotFoundException;
-    public void cleanPlayerTable() throws ClassNotFoundException, SQLException;
-    public Player getPlayer(String username) throws SQLException, ClassNotFoundException, PlayerDataCorruptionException, PlayerIsNotPresentException, IllegalUsernameException;
+    public void cleanPlayerTable();
 
+    void insert(String query) throws SQLException;
+    void deleteQuery(String query) throws ClassNotFoundException, SQLException;
+    ResultSet executeQuery(String query) throws PlayerIsNotPresentException, SQLException, ClassNotFoundException;
+    void updateQuery(String query);
 }
